@@ -1,7 +1,7 @@
-import { createToastInterface } from "vue-toastification";
+import { useToast } from "vue-toastification";
 
 export default function () {
-  const toast = createToastInterface();
+  const toast = useToast();
 
   return toast;
 }
