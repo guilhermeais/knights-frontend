@@ -1,7 +1,7 @@
 <template>
   <div class="container mx-auto p-4">
     <h1 class="text-3xl font-bold mb-4">Atualizando {{ name }} ⚔️</h1>
-    <div v-if="loading && knightUpdateData?.name" class="text-center">
+    <div v-if="loading" class="text-center">
       <Icon name="⏳" class="animate-bounce h-8 w-8 text-gray-800" />
       <span class="text-gray-800 text-xl font-semibold ml-2"
         >Carregando...</span
@@ -29,7 +29,7 @@ const { $swal } = useNuxtApp();
 
 const knightStore = useKnightsStore();
 const toast = useToast();
-const { id } = defineProps({
+const props = defineProps({
   id: {
     type: String,
     required: true,
@@ -47,7 +47,7 @@ const loading = ref<boolean>(false);
 const fetchKnight = async () => {
   loading.value = true;
   try {
-    await knightStore.fetchKnight(id);
+    await knightStore.fetchKnight(props.id);
 
     knightUpdateData.value = knightStore?.knight;
   } catch (error) {
@@ -74,7 +74,7 @@ const updateKnight = async () => {
       cancelButtonColor: "gray",
     });
     if (!isConfirmed) return;
-    await knightStore.updateKnight(id, {
+    await knightStore.updateKnight(props.id, {
       nickname: knightUpdateData.value!.nickname,
       weapons: knightUpdateData.value!.weapons,
     });
@@ -86,5 +86,5 @@ const updateKnight = async () => {
   }
 };
 
-watch([id], fetchKnight, { immediate: true });
+watch([props], fetchKnight, { immediate: true });
 </script>

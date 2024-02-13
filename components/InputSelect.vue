@@ -1,6 +1,10 @@
 <template>
   <div class="relative">
+    <label for="selector" class="block text-sm font-medium text-gray-700">
+      {{ label }}
+    </label>
     <select
+      name="selector"
       v-model="selectedValue"
       :disabled="disabled"
       @change="handleChange"
@@ -10,9 +14,8 @@
         v-for="(option, index) in options"
         :key="index"
         :value="option.value"
-      >
-        {{ option.label }}
-      </option>
+        :label="option.label"
+      ></option>
     </select>
     <div
       class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
@@ -48,6 +51,7 @@ const props = defineProps({
     type: [String, Number],
     default: "",
   },
+  label: String,
 });
 
 const emits = defineEmits(["update:modelValue"]);
@@ -59,6 +63,7 @@ onMounted(() => {
 });
 const handleChange = (event: any) => {
   selectedValue.value = event.target.value;
+
   emits("update:modelValue", selectedValue.value);
 };
 </script>

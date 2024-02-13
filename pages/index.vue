@@ -10,14 +10,16 @@
         Criar Guerreiro
       </button>
     </div>
-    <div v-if="loading" class="flex items-center justify-center">
-      <Icon name="⏳" class="animate-bounce h-8 w-8 text-gray-800" />
-      <span class="text-gray-800 text-xl font-semibold ml-2"
-        >Carregando...</span
-      >
+
+    <div class="mb-4 grid grid-cols-3">
+      <InputSelect
+        v-model="selecteKnightType"
+        :options="knightTypesOptions"
+        label="Filtrar por tipo:"
+      />
     </div>
+
     <div
-      v-else
       class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
     >
       <KnightCard
@@ -28,6 +30,17 @@
         :knight="knight"
         @remove="() => handleRemoveKnight(knight)"
       />
+    </div>
+
+    <div v-if="store.showLoadMore && !loading" class="flex justify-center mt-4">
+      <Button @click="loadMoreKnights"> Carregar Mais Guerreiros </Button>
+    </div>
+
+    <div v-if="loading" class="flex items-center justify-center mt-6">
+      <Icon name="⏳" class="animate-bounce h-8 w-8 text-gray-800" />
+      <span class="text-gray-800 text-xl font-semibold ml-2"
+        >Carregando...</span
+      >
     </div>
 
     <Modal :isOpen="createKnightModal" @close="closeCreateKnightModal">
@@ -46,16 +59,37 @@
 </template>
 
 <script setup lang="ts">
+import type { FetchKnightsParams } from "@/store/knights.store";
 import { useKnightsStore } from "@/store/knights.store";
 import { ref, onMounted } from "vue";
+import { KnightAttributesEnum } from "~/models/enums/knight-attributes";
+import { KnightType } from "~/models/enums/knight-type";
+import { knightTypePortuguese } from "~/models/knight.model";
 import type { SimpleKnight } from "~/models/knight.model";
 const { $swal } = useNuxtApp();
+const toast = useToast();
 
 const store = useKnightsStore();
 const loading = ref(true);
 const createKnightModal = ref(false);
 const updateKnightModal = ref(false);
 const editingKnight = ref<SimpleKnight | null>(null);
+
+const knightTypesOptions: {
+  label: string;
+  value: KnightType | null;
+}[] = [
+  {
+    label: "Todos",
+    value: null,
+  },
+  ...Object.values(KnightType).map((type) => ({
+    label: knightTypePortuguese[type],
+    value: type,
+  })),
+];
+
+const selecteKnightType = ref(null as KnightType | null);
 
 const closeCreateKnightModal = () => {
   createKnightModal.value = false;
@@ -68,6 +102,28 @@ const closeUpdateKnightModal = () => {
 const handleEditKnigt = (knight: SimpleKnight) => {
   editingKnight.value = knight;
   updateKnightModal.value = true;
+};
+
+const fetchKnights = async (params?: FetchKnightsParams) => {
+  try {
+    loading.value = true;
+    await store.fetchKnights({
+      ...params,
+      type: selecteKnightType.value!,
+    });
+  } catch (error: any) {
+    console.error("Erro ao carregar guerreiros:", error);
+    toast.error("Erro ao carregar guerreiros");
+  } finally {
+    loading.value = false;
+  }
+};
+
+const loadMoreKnights = async () => {
+  await fetchKnights({
+    page: store.nextPage!,
+    type: selecteKnightType.value!,
+  });
 };
 
 const handleRemoveKnight = async (knight: SimpleKnight) => {
@@ -91,12 +147,8 @@ const handleRemoveKnight = async (knight: SimpleKnight) => {
   }
 };
 onMounted(async () => {
-  try {
-    await store.fetchKnights();
-  } catch (error: any) {
-    console.error("Erro ao carregar guerreiros:", error);
-  } finally {
-    loading.value = false;
-  }
+  fetchKnights();
 });
+
+watch([selecteKnightType], fetchKnights);
 </script>

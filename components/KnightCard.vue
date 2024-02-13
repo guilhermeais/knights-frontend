@@ -1,6 +1,5 @@
 <template>
   <div
-    
     class="bg-white p-4 rounded-lg shadow-md hover:bg-slate-50 cursor-pointer transition duration-300 ease-in-out"
   >
     <div @click="handleClick">
@@ -11,11 +10,13 @@
         Quantidade de armas: {{ knight.weaponsQuantity }}
       </div>
       <div class="text-gray-600 mb-2">
-        Atributo chave: {{ knight.keyAttribute }}
+        Atributo chave: {{ knightAttributesPortuguese[knight.keyAttribute] }}
       </div>
       <div class="text-gray-600 mb-2">Ataque: {{ knight.attack }}</div>
       <div class="text-gray-600 mb-2">Experiência: {{ knight.experience }}</div>
-      <div class="text-gray-600 mb-2">Tipo: {{ knight.type }}</div>
+      <div class="text-gray-600 mb-2">
+        Tipo: {{ knightTypePortuguese[knight.type] }}
+      </div>
       <div class="text-gray-600 mb-2">
         Criado em: {{ formattedDate(knight.createdAt) }}
       </div>
@@ -33,6 +34,10 @@
 </template>
 
 <script setup lang="ts">
+import {
+  knightAttributesPortuguese,
+  knightTypePortuguese,
+} from "@/models/knight.model";
 import type { SimpleKnight } from "@/models/knight.model";
 import { format } from "date-fns";
 
