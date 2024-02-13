@@ -4,8 +4,10 @@
   </label>
   <input
     @input="handleChange"
+    :value="modelValue"
     type="text"
     class="mt-1 p-2 border border-gray-300 rounded-md w-full"
+    :disabled="disabled"
   />
 </template>
 
@@ -14,6 +16,7 @@ defineProps({
   modelValue: String,
   label: String,
   labelFor: String,
+  disabled: Boolean,
 });
 
 const emit = defineEmits(["update:modelValue"]);

@@ -2,6 +2,7 @@
   <div class="relative">
     <select
       v-model="selectedValue"
+      :disabled="disabled"
       @change="handleChange"
       class="block appearance-none w-full bg-white border border-gray-300 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:border-blue-500"
     >
@@ -33,8 +34,8 @@ import { ref, defineProps, defineEmits } from "vue";
 const props = defineProps({
   options: {
     type: Array<{
-        label: string;
-        value: string | number;
+      label: string;
+      value: string | number;
     }>,
     required: true,
   },
@@ -42,12 +43,20 @@ const props = defineProps({
     type: [String, Number],
     default: "",
   },
+  disabled: Boolean,
+  modelValue: {
+    type: [String, Number],
+    default: "",
+  },
 });
 
 const emits = defineEmits(["update:modelValue"]);
 
-const selectedValue = ref(props.value);
+const selectedValue = ref<string | number | null>(null);
 
+onMounted(() => {
+  selectedValue.value = props.modelValue;
+});
 const handleChange = (event: any) => {
   selectedValue.value = event.target.value;
   emits("update:modelValue", selectedValue.value);

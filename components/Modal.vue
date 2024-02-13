@@ -43,6 +43,21 @@ watch(
     }
   }
 );
+
+function handleEscapeKey(e: KeyboardEvent) {
+  const ESC = "Escape";
+  if (e.key === ESC) {
+    closeModal();
+  }
+}
+
+onMounted(() => {
+  addEventListener("keydown", handleEscapeKey);
+});
+
+onUnmounted(() => {
+  removeEventListener("keydown", handleEscapeKey);
+});
 </script>
 
 <style scoped>

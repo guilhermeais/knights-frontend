@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: ["@nuxtjs/tailwindcss", "@pinia/nuxt", "nuxt-icon"],
-  plugins: ["~/plugins/toast.client.ts", "~/plugins/axios.client.ts"],
+  plugins: ["~/plugins/toast.client.ts", "~/plugins/axios.client.ts", '~/plugins/sweetalert2.ts'],
   app: {
     head: {
       title: "Knights",
@@ -12,7 +12,6 @@ export default defineNuxtConfig({
   tailwindcss: {
     cssPath: "@/assets/css/tailwind.css",
   },
-  css: ["vue-final-modal/style.css"],
   build: {
     transpile: ["vue-toastification"],
   },

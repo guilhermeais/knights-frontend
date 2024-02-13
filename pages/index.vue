@@ -22,13 +22,25 @@
     >
       <KnightCard
         v-for="knight in store.knights"
+        @click="() => handleEditKnigt(knight)"
+        @detail="() => handleEditKnigt(knight)"
         :key="knight.id"
         :knight="knight"
+        @remove="() => handleRemoveKnight(knight)"
       />
     </div>
 
     <Modal :isOpen="createKnightModal" @close="closeCreateKnightModal">
       <CreateKnight @created="closeCreateKnightModal" />
+    </Modal>
+
+    <Modal :isOpen="updateKnightModal" @close="closeUpdateKnightModal">
+      <UpdateKnight
+        :id="editingKnight.id"
+        :name="editingKnight.name"
+        @updated="closeUpdateKnightModal"
+        @error="closeUpdateKnightModal"
+      />
     </Modal>
   </div>
 </template>
@@ -36,13 +48,47 @@
 <script setup lang="ts">
 import { useKnightsStore } from "@/store/knights.store";
 import { ref, onMounted } from "vue";
+import type { SimpleKnight } from "~/models/knight.model";
+const { $swal } = useNuxtApp();
 
 const store = useKnightsStore();
 const loading = ref(true);
 const createKnightModal = ref(false);
+const updateKnightModal = ref(false);
+const editingKnight = ref<SimpleKnight | null>(null);
 
 const closeCreateKnightModal = () => {
   createKnightModal.value = false;
+};
+
+const closeUpdateKnightModal = () => {
+  updateKnightModal.value = false;
+};
+
+const handleEditKnigt = (knight: SimpleKnight) => {
+  editingKnight.value = knight;
+  updateKnightModal.value = true;
+};
+
+const handleRemoveKnight = async (knight: SimpleKnight) => {
+  try {
+    const result = await $swal.fire({
+      title: "Remover Guerreiro",
+      html: `Deseja remover o guerreiro <strong>${knight.name}</strong>?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sim",
+      cancelButtonText: "Cancelar",
+      confirmButtonColor: "red",
+      cancelButtonColor: "gray",
+    });
+
+    if (!result.isConfirmed) return;
+
+    await store.deleteKnight(knight.id);
+  } catch (error: any) {
+    console.error("Erro ao remover guerreiro:", error);
+  }
 };
 onMounted(async () => {
   try {

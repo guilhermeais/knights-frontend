@@ -65,6 +65,7 @@ export const useKnightsStore = defineStore("knights-store", {
 
       try {
         const { data } = await $axios<Knight>(`/knights/${id}`);
+        console.log(data);
         this.knight = data;
       } catch (error: any) {
         console.error(this.fetchKnight.name, error);
@@ -86,7 +87,13 @@ export const useKnightsStore = defineStore("knights-store", {
         throw error;
       }
     },
-    async updateKnight(id: string, knight: CreateKnightParams): Promise<void> {
+    async updateKnight(
+      id: string,
+      knight: {
+        nickname: string;
+        weapons: KnightWeapon[];
+      }
+    ): Promise<void> {
       const { $axios } = useNuxtApp();
 
       try {
@@ -94,6 +101,8 @@ export const useKnightsStore = defineStore("knights-store", {
           method: "PATCH",
           data: knight,
         });
+
+        await this.fetchKnights();
       } catch (error: any) {
         console.error(this.updateKnight.name, error);
         throw error;
@@ -106,6 +115,8 @@ export const useKnightsStore = defineStore("knights-store", {
         await $axios(`/knights/${id}`, {
           method: "DELETE",
         });
+
+        await this.fetchKnights();
       } catch (error: any) {
         console.error(this.deleteKnight.name, error);
         throw error;

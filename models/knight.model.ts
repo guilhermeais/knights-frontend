@@ -24,7 +24,7 @@ export type Knight = {
   age: number;
   attributes: KnightAttributes;
   keyAttribute: KnightAttributesEnum;
-  weapons?: KnightWeapon[];
+  weapons: KnightWeapon[];
   type: KnightType;
   attack: number;
   experience: number;
@@ -38,4 +38,22 @@ export type KnightAttributes = Partial<
 
 export type KnightWeapon = Weapon & {
   equipped: boolean;
+};
+
+export const knightAttributesPortuguese: {
+  [key in Lowercase<keyof typeof KnightAttributesEnum>]: string;
+} = {
+  charisma: "Carisma",
+  constitution: "Constituição",
+  dexterity: "Destreza",
+  intelligence: "Inteligência",
+  strength: "Força",
+  wisdom: "Sabedoria",
+};
+
+export const knightTypePortuguese: {
+  [key in Lowercase<keyof typeof KnightType>]: string;
+} = {
+  hero: "Herói",
+  villain: "Vilão",
 };

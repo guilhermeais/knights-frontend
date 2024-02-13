@@ -8,16 +8,26 @@
     id="birthday"
     name="birthday"
     class="mt-1 p-2 border border-gray-300 rounded-md w-full"
+    :disabled="disabled"
   />
 </template>
 
 <script setup lang="ts">
-import { parse, isValid } from "date-fns";
+import { parse, isValid, format } from "date-fns";
 const dateString = ref("");
-defineProps({
-  modelValue: Date,
+
+const { modelValue } = defineProps({
+  modelValue: {
+    type: Date,
+    required: true,
+  },
+  disabled: Boolean,
 });
 const emit = defineEmits(["update:modelValue"]);
+
+onMounted(() => {
+  dateString.value = modelValue ? format(modelValue, "yyyy-MM-dd") : "";
+});
 
 watch(
   () => dateString.value,
