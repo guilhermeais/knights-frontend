@@ -62,13 +62,6 @@ export const useKnightsStore = defineStore("knights-store", {
         this.limit = params?.limit ?? this.limit;
         this.type = params?.type ?? null;
 
-        console.log(
-          "fetchKnights -> this.currentPage, this.limit, this.type",
-          this.currentPage,
-          this.limit,
-          this.type
-        );
-
         const { data: result } = await $axios<PaginatedResponse<SimpleKnight>>(
           "/knights",
           {
@@ -100,8 +93,12 @@ export const useKnightsStore = defineStore("knights-store", {
           ].map((knight) => [knight.id, knight])
         );
       } catch (error: any) {
-        console.error(this.fetchKnights.name, error);
-        throw error;
+        const errorMessage =
+          error.response?.data?.message ||
+          "Ocorreu um erro na busca dos guerreiros.";
+        throw new Error(
+          errorMessage || "Ocorreu um erro na busca dos guerreiros."
+        );
       }
     },
     async fetchKnight(id: string): Promise<void> {
@@ -115,8 +112,10 @@ export const useKnightsStore = defineStore("knights-store", {
           birthday: new Date(data.birthday),
         };
       } catch (error: any) {
-        console.error(this.fetchKnight.name, error);
-        throw error;
+        const errorMessage =
+          error.response?.data?.message ||
+          "Ocorreu um erro na busca do guerreiro.";
+        throw new Error(errorMessage);
       }
     },
     async createKnight(knight: CreateKnightParams): Promise<void> {
