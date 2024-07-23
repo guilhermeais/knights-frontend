@@ -49,7 +49,9 @@ export const useKnightsStore = defineStore("knights-store", {
       return [
         ...Array.from(state._heroes.values()),
         ...Array.from(state._villains.values()),
-      ];
+      ].sort(
+        (a, b) => a.createdAt.getMilliseconds() - b.createdAt.getMilliseconds()
+      );
     },
     showLoadMore: (state) =>
       state.nextPage !== null && state.nextPage <= state.totalPages,
@@ -79,20 +81,24 @@ export const useKnightsStore = defineStore("knights-store", {
         this.nextPage = nextPage ?? null;
         this.currentPage = page;
         this.totalPages = totalPages || 0;
-        this._heroes = new Map(
-          [
-            ...this._heroes.values(),
-            ...data.filter((k) => k.type === KnightType.HERO),
-          ].map((knight) => [knight.id, knight])
-        );
 
-        this._villains = new Map(
-          [
-            ...this._villains.values(),
-            ...data.filter((k) => k.type === KnightType.VILLAIN),
-          ].map((knight) => [knight.id, knight])
-        );
+        this._heroes.clear();
+        this._villains.clear();
+
+        data.forEach((knight) => {
+          knight.createdAt = new Date(knight.createdAt);
+          knight.updatedAt = knight.updatedAt && new Date(knight.updatedAt);
+
+          if (knight.type === KnightType.HERO) {
+            this._heroes.set(knight.id, knight);
+          }
+
+          if (knight.type === KnightType.VILLAIN) {
+            this._villains.set(knight.id, knight);
+          }
+        });
       } catch (error: any) {
+        console.error(this.fetchKnights.name, error);
         const errorMessage =
           error.response?.data?.message ||
           "Ocorreu um erro na busca dos guerreiros.";
