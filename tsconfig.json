@@ -4,6 +4,7 @@
   "compilerOptions": {
     "experimentalDecorators": true,
     "moduleResolution": "node",
+    "verbatimModuleSyntax": false,
     "types": ["@nuxt/types", "@nuxtjs/axios"]
   }
 }
