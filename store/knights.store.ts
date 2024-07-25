@@ -82,9 +82,6 @@ export const useKnightsStore = defineStore("knights-store", {
         this.currentPage = page;
         this.totalPages = totalPages || 0;
 
-        this._heroes.clear();
-        this._villains.clear();
-
         data.forEach((knight) => {
           knight.createdAt = new Date(knight.createdAt);
           knight.updatedAt = knight.updatedAt && new Date(knight.updatedAt);

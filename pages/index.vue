@@ -18,22 +18,33 @@
         label="Filtrar por tipo:"
       />
     </div>
-
     <div
       class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
     >
-      <KnightCard
-        v-for="knight in store.knights"
-        @click="() => handleEditKnigt(knight)"
-        @detail="() => handleEditKnigt(knight)"
-        :key="knight.id"
-        :knight="knight"
-        @remove="() => handleRemoveKnight(knight)"
-      />
+      <template v-if="store.knights.length">
+        <KnightCard
+          id="knight-card"
+          v-for="knight in store.knights"
+          @click="() => handleEditKnigt(knight)"
+          @detail="() => handleEditKnigt(knight)"
+          :key="knight.id"
+          :knight="knight"
+          @remove="() => handleRemoveKnight(knight)"
+        />
+      </template>
+      <template v-else-if="!loading">
+        <div
+          id="no-knights"
+          class="text-3xl col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-4 text-center"
+        >
+          Nenhum guerreiro encontrado 🍃
+        </div>
+      </template>
     </div>
-
     <div v-if="store.showLoadMore && !loading" class="flex justify-center mt-4">
-      <Button @click="loadMoreKnights"> Carregar Mais Guerreiros </Button>
+      <Button id="load-more" @click="loadMoreKnights">
+        Carregar Mais Guerreiros
+      </Button>
     </div>
 
     <div v-if="loading" class="flex items-center justify-center mt-6">
